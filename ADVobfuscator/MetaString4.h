@@ -21,7 +21,6 @@
 #define MetaString4_h
 
 #include "Inline.h"
-#include "Indexes.h"
 #include "MetaRandom.h"
 #include "Log.h"
 
@@ -42,7 +41,7 @@ struct MetaString4;
 // Each character is encrypted (XOR) with the same key, stored at the beginning of the buffer
 
 template<char K, int... I>
-struct MetaString4<0, K, Indexes<I...>>
+struct MetaString4<0, K, std::index_sequence<I...>>
 {
     // Constructor. Evaluated at compile time. Key is stored as the first element of the buffer
     constexpr ALWAYS_INLINE MetaString4(const char* str)
@@ -72,7 +71,7 @@ private:
 // Each character is encrypted (XOR) with an incremented key. The first key is stored at the beginning of the buffer
 
 template<char K, int... I>
-struct MetaString4<1, K, Indexes<I...>>
+struct MetaString4<1, K, std::index_sequence<I...>>
 {
     // Constructor. Evaluated at compile time. Key is stored as the first element of the buffer
     constexpr ALWAYS_INLINE MetaString4(const char* str)
@@ -102,7 +101,7 @@ private:
 // Shift the value of each character and does not store the key. It is only used at compile-time.
 
 template<char K, int... I>
-struct MetaString4<2, K, Indexes<I...>>
+struct MetaString4<2, K, std::index_sequence<I...>>
 {
     // Constructor. Evaluated at compile time. Key is *not* stored
     constexpr ALWAYS_INLINE MetaString4(const char* str)
@@ -138,7 +137,7 @@ struct MetaRandomChar4
 }}
 
 // Prefix notation
-#define DEF_OBFUSCATED4(str) MetaString4<andrivet::ADVobfuscator::MetaRandom<__COUNTER__, 3>::value, andrivet::ADVobfuscator::MetaRandomChar4<__COUNTER__>::value, Make_Indexes<sizeof(str) - 1>::type>(str)
+#define DEF_OBFUSCATED4(str) MetaString4<andrivet::ADVobfuscator::MetaRandom<__COUNTER__, 3>::value, andrivet::ADVobfuscator::MetaRandomChar4<__COUNTER__>::value, std::make_index_sequence<sizeof(str)>>(str)
 
 #define OBFUSCATED4(str) (DEF_OBFUSCATED4(str).decrypt())
 
